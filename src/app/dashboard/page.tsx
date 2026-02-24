@@ -56,11 +56,26 @@ export default function DashboardPage() {
     const warmthParam = params.get("warmth")
     const validWarmth = warmthParam === "Hot" || warmthParam === "Warm" || warmthParam === "Cold"
 
+    const location = params.get("location") ?? ""
+    const datePostedParam = params.get("datePosted") ?? undefined
+    const contactRaw = params.get("contactRaw") ?? ""
+
+    // Parse contactName: first line or everything before the first comma
+    // Parse contactTitle: everything after the first comma before any second comma
+    let contactName: string | undefined
+    let contactTitle: string | undefined
+    if (contactRaw.trim()) {
+      const firstLine = contactRaw.trim().split(/\n/)[0]?.trim() ?? contactRaw.trim()
+      const parts = firstLine.split(",").map((p) => p.trim())
+      contactName = parts[0] || undefined
+      contactTitle = parts[1] || undefined
+    }
+
     const newApp: Application = {
       id:             crypto.randomUUID(),
       company:        params.get("company")       ?? "",
       role:           params.get("role")          ?? "",
-      location:       "",
+      location,
       postingUrl:     params.get("url")           ?? "",
       source:         (params.get("source") ?? "LinkedIn") as Source,
       priority:       "P1",
@@ -70,10 +85,10 @@ export default function DashboardPage() {
       gotReply:       false,
       applied:        false,
       referralStatus: "None",
-      contactName:    params.get("contactName")  ?? undefined,
-      contactTitle:   params.get("contactTitle") ?? undefined,
+      contactName,
+      contactTitle,
       dateAdded:      new Date().toISOString(),
-      datePosted:      params.get("datePosted")   ?? undefined,
+      datePosted:     datePostedParam,
     }
 
     // Read directly from storage to avoid race with the other useEffect

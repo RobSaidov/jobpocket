@@ -28,11 +28,10 @@ export async function POST(req: NextRequest) {
   console.log("API KEY EXISTS:", !!process.env.ANTHROPIC_API_KEY, "LENGTH:", process.env.ANTHROPIC_API_KEY?.length)
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
   try {
-    const { tier, userBackground, contactName, contactTitle, company, role } = await req.json() as {
+    const { tier, userBackground, contactRaw, company, role } = await req.json() as {
       tier: "Hot" | "Warm" | "Cold"
       userBackground: string
-      contactName: string
-      contactTitle: string
+      contactRaw: string
       company: string
       role: string
     }
@@ -42,7 +41,9 @@ export async function POST(req: NextRequest) {
 Tier: ${tier}
 Tier guidance: ${TIER_GUIDANCE[tier] ?? TIER_GUIDANCE.Cold}
 
-Contact: ${contactName || "the contact"}${contactTitle ? `, ${contactTitle}` : ""} at ${company || "the company"}
+Extract the person's name and title from this raw contact info: ${contactRaw || "(not provided)"}. Use what you find naturally in the message.
+
+Company: ${company || "the company"}
 Role being targeted: ${role || "a position"} at ${company || "the company"}
 User background: ${userBackground || "Not provided"}
 

@@ -9,8 +9,9 @@ let state = {
   jobText: "",
   blockers: [],
   tier: "Warm",
-  contactName: "",
-  contactTitle: "",
+  contactRaw: "",
+  jobLocation: "",
+  jobDatePosted: "",
   message: "",
   loading: false,
 }
@@ -47,8 +48,7 @@ function render() {
       btn.classList.toggle("active", btn.dataset.tier === state.tier)
     })
 
-    $("contact-name").value  = state.contactName
-    $("contact-title").value = state.contactTitle
+    $("contact-raw").value = state.contactRaw
 
     const genBtn = $("btn-generate")
     genBtn.disabled = state.loading
@@ -109,12 +109,14 @@ function handleJobData(data) {
     render()
     return
   }
-  state.view       = "job"
-  state.jobTitle   = data.title      || ""
-  state.jobCompany = data.company    || ""
-  state.jobText    = data.text       || ""
-  state.blockers   = data.blockers   || []
-  state.jobUrl     = data.postingUrl || state.jobUrl
+  state.view         = "job"
+  state.jobTitle     = data.title      || ""
+  state.jobCompany   = data.company    || ""
+  state.jobText      = data.text       || ""
+  state.blockers     = data.blockers   || []
+  state.jobUrl       = data.postingUrl || state.jobUrl
+  state.jobLocation  = data.location   || ""
+  state.jobDatePosted = data.datePosted || ""
   render()
 }
 
@@ -126,16 +128,15 @@ document.querySelectorAll(".tier-btn").forEach((btn) => {
   })
 })
 
-// ── Contact inputs ─────────────────────────────────────────────────────────
-$("contact-name").addEventListener("input",  (e) => { state.contactName  = e.target.value })
-$("contact-title").addEventListener("input", (e) => { state.contactTitle = e.target.value })
+// ── Contact input ──────────────────────────────────────────────────────────
+$("contact-raw").addEventListener("input", (e) => { state.contactRaw = e.target.value })
 
 // ── Generate outreach ──────────────────────────────────────────────────────
 $("btn-generate").addEventListener("click", () => {
-  if (!state.contactName.trim()) {
-    $("contact-name").focus()
-    $("contact-name").style.borderColor = "#dc2626"
-    setTimeout(() => { $("contact-name").style.borderColor = "" }, 2000)
+  if (!state.contactRaw.trim()) {
+    $("contact-raw").focus()
+    $("contact-raw").style.borderColor = "#dc2626"
+    setTimeout(() => { $("contact-raw").style.borderColor = "" }, 2000)
     return
   }
 
@@ -153,8 +154,7 @@ $("btn-generate").addEventListener("click", () => {
         payload: {
           tier:         state.tier,
           userBackground,
-          contactName:  state.contactName,
-          contactTitle: state.contactTitle,
+          contactRaw:   state.contactRaw,
           company:      state.jobCompany,
           role:         state.jobTitle,
         },
@@ -204,8 +204,9 @@ function addToJobPocket() {
     `&url=${encodeURIComponent(state.jobUrl)}` +
     `&source=LinkedIn` +
     `&warmth=${encodeURIComponent(state.tier)}` +
-    `&contactName=${encodeURIComponent(state.contactName)}` +
-    `&contactTitle=${encodeURIComponent(state.contactTitle)}`
+    `&location=${encodeURIComponent(state.jobLocation || "")}` +
+    `&datePosted=${encodeURIComponent(state.jobDatePosted || "")}` +
+    `&contactRaw=${encodeURIComponent(state.contactRaw || "")}`
 
   chrome.tabs.create({ url })
 

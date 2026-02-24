@@ -62,6 +62,55 @@ function extractJobData() {
 
   const postingUrl = window.location.href
 
+  // Location — first result that looks like a location (city/state or Remote)
+  function looksLikeLocation(str) {
+    const s = str.trim()
+    if (!s) return false
+    if (/remote/i.test(s)) return true
+    // city, state or city · state or similar
+    if (/,/.test(s) || /\s+·\s+/.test(s) || /\s+-\s+/.test(s)) return true
+    if (/^[A-Za-z\s]+,\s*[A-Za-z\s]+$/.test(s)) return true
+    return false
+  }
+  const locationSelectors = [
+    ".job-details-jobs-unified-top-card__bullet",
+    ".jobs-unified-top-card__bullet",
+    ".tvm__text",
+  ]
+  let location = ""
+  for (const sel of locationSelectors) {
+    const el = document.querySelector(sel)
+    if (el && el.textContent.trim()) {
+      const candidate = el.textContent.trim()
+      if (looksLikeLocation(candidate)) {
+        location = candidate
+        break
+      }
+    }
+  }
+
+  // Date posted — try time[datetime] first, then class selectors
+  let datePosted = ""
+  const timeEl = document.querySelector("time[datetime]")
+  if (timeEl) {
+    const dt = timeEl.getAttribute("datetime")
+    if (dt) datePosted = dt
+    else if (timeEl.textContent.trim()) datePosted = timeEl.textContent.trim()
+  }
+  if (!datePosted) {
+    const dateSelectors = [
+      ".job-details-jobs-unified-top-card__posted-date",
+      ".jobs-unified-top-card__posted-date",
+    ]
+    for (const sel of dateSelectors) {
+      const el = document.querySelector(sel)
+      if (el && el.textContent.trim()) {
+        datePosted = el.textContent.trim()
+        break
+      }
+    }
+  }
+
   // Job description text for blocker scanning
   const descSelectors = [
     ".jobs-description__content",
@@ -86,7 +135,7 @@ function extractJobData() {
 
   const blockers = detectBlockers(descText)
 
-  return { title, company, text: descText.slice(0, 3000), blockers, postingUrl }
+  return { title, company, text: descText.slice(0, 3000), blockers, postingUrl, location, datePosted }
 }
 
 // ── Message listener ────────────────────────────────────────────────────────

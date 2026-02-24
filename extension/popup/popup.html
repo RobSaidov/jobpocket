@@ -128,6 +128,7 @@
     }
     .input:focus { border-color: #0a0a0a; }
     .input::placeholder { color: #bbb; }
+    textarea.input { resize: vertical; min-height: 60px; }
 
     /* Buttons */
     .btn {
@@ -231,11 +232,8 @@
         <button class="tier-btn" data-tier="Cold">🧊 Cold</button>
       </div>
 
-      <span class="label">Contact Name</span>
-      <input class="input" id="contact-name" type="text" placeholder="e.g. Sarah Chen" />
-
-      <span class="label">Contact Title</span>
-      <input class="input" id="contact-title" type="text" placeholder="e.g. Senior Engineer" />
+      <span class="label">Contact Info</span>
+      <textarea class="input" id="contact-raw" rows="3" placeholder="Paste anything — name, title, LinkedIn snippet, or just 'Sarah Chen, ML Engineer at Google, 2nd connection'"></textarea>
 
       <button class="btn primary" id="btn-generate">Generate Outreach →</button>
       <button class="btn secondary" id="btn-add">+ Add to JobPocket</button>
