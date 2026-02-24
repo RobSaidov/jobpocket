@@ -35,7 +35,7 @@ Return ONLY a valid JSON array with no extra text, no markdown, no code fences. 
 - whyReach (string)`
 
     const message = await client.messages.create({
-      model: "claude-opus-4-6",
+      model: "claude-sonnet-4-5",
       max_tokens: 1024,
       messages: [{ role: "user", content: prompt }],
     })

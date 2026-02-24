@@ -55,7 +55,7 @@ Write ONE short outreach message following the tier guidance above. Rules:
 - Write only the message — no subject line, no explanation, no quotes around it`
 
     const response = await client.messages.create({
-      model: "claude-opus-4-6",
+      model: "claude-sonnet-4-5",
       max_tokens: 512,
       messages: [{ role: "user", content: prompt }],
     })
