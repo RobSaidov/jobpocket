@@ -9,7 +9,7 @@ let state = {
   jobText: "",
   blockers: [],
   tier: "Warm",
-  contactRaw: "",
+  contactRaw: "",  // only set from textarea input (never from LinkedIn DOM)
   jobLocation: "",
   jobDatePosted: "",
   message: "",
@@ -128,7 +128,7 @@ document.querySelectorAll(".tier-btn").forEach((btn) => {
   })
 })
 
-// ── Contact input ──────────────────────────────────────────────────────────
+// ── Contact input (only source of state.contactRaw — do not set from job data) ─
 $("contact-raw").addEventListener("input", (e) => { state.contactRaw = e.target.value })
 
 // ── Generate outreach ──────────────────────────────────────────────────────

@@ -60,15 +60,15 @@ export default function DashboardPage() {
     const datePostedParam = params.get("datePosted") ?? undefined
     const contactRaw = params.get("contactRaw") ?? ""
 
-    // Parse contactName: first line or everything before the first comma
-    // Parse contactTitle: everything after the first comma before any second comma
+    // contactName and contactTitle ONLY from parsing contactRaw (never from LinkedIn/URL)
+    // Name = everything before first comma; Title = between first and second comma; no comma = full as name
     let contactName: string | undefined
     let contactTitle: string | undefined
     if (contactRaw.trim()) {
       const firstLine = contactRaw.trim().split(/\n/)[0]?.trim() ?? contactRaw.trim()
       const parts = firstLine.split(",").map((p) => p.trim())
       contactName = parts[0] || undefined
-      contactTitle = parts[1] || undefined
+      contactTitle = parts.length >= 2 ? parts[1] : undefined
     }
 
     const newApp: Application = {
