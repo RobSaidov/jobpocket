@@ -4,7 +4,8 @@
   "version": "1.0",
   "description": "Warm up your job applications",
   "permissions": ["activeTab", "storage", "scripting"],
-  "host_permissions": ["https://www.linkedin.com/*"],
+  "host_permissions": [ "https://www.linkedin.com/*",
+  "https://jobpocket-7rgkohcd1-robsaidov-5198s-projects.vercel.app/*"],
   "action": {
     "default_popup": "popup/popup.html"
   },
