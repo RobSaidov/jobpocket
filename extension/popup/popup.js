@@ -198,7 +198,14 @@ $("btn-back").addEventListener("click", () => {
 
 // ── Add to JobPocket ───────────────────────────────────────────────────────
 function addToJobPocket() {
-  const url = `${APP_BASE}/dashboard?add=true&company=${encodeURIComponent(state.jobCompany)}&role=${encodeURIComponent(state.jobTitle)}&url=${encodeURIComponent(state.jobUrl)}&source=LinkedIn&warmth=${encodeURIComponent(state.tier)}`
+  const url = `${APP_BASE}/dashboard?add=true` +
+    `&company=${encodeURIComponent(state.jobCompany)}` +
+    `&role=${encodeURIComponent(state.jobTitle)}` +
+    `&url=${encodeURIComponent(state.jobUrl)}` +
+    `&source=LinkedIn` +
+    `&warmth=${encodeURIComponent(state.tier)}` +
+    `&contactName=${encodeURIComponent(state.contactName)}` +
+    `&contactTitle=${encodeURIComponent(state.contactTitle)}`
 
   chrome.tabs.create({ url })
 

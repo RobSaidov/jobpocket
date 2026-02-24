@@ -58,11 +58,11 @@ export default function DashboardPage() {
 
     const newApp: Application = {
       id:             crypto.randomUUID(),
-      company:        params.get("company")    ?? "",
-      role:           params.get("role")       ?? "",
+      company:        params.get("company")       ?? "",
+      role:           params.get("role")          ?? "",
       location:       "",
-      postingUrl:     params.get("url")        ?? "",
-      source:         (params.get("source")    ?? "LinkedIn") as Source,
+      postingUrl:     params.get("url")           ?? "",
+      source:         (params.get("source") ?? "LinkedIn") as Source,
       priority:       "P1",
       warmth:         validWarmth ? warmthParam : "Warm",
       status:         "To Apply",
@@ -70,7 +70,10 @@ export default function DashboardPage() {
       gotReply:       false,
       applied:        false,
       referralStatus: "None",
+      contactName:    params.get("contactName")  ?? undefined,
+      contactTitle:   params.get("contactTitle") ?? undefined,
       dateAdded:      new Date().toISOString(),
+      datePosted:      params.get("datePosted")   ?? undefined,
     }
 
     // Read directly from storage to avoid race with the other useEffect
