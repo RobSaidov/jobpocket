@@ -1,9 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { NextRequest, NextResponse } from "next/server"
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
 export async function POST(req: NextRequest) {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
   try {
     const { resume, background, company, jobTitle, jobDescription } = await req.json()
     const userBackground = resume ?? background ?? ""

@@ -1,8 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { NextRequest, NextResponse } from "next/server"
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin":  "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -27,6 +25,7 @@ export async function OPTIONS() {
 }
 
 export async function POST(req: NextRequest) {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
   try {
     const { tier, userBackground, contactName, contactTitle, company, role } = await req.json() as {
       tier: "Hot" | "Warm" | "Cold"
@@ -64,7 +63,7 @@ Write ONE short outreach message following the tier guidance above. Rules:
 
     return NextResponse.json({ message }, { headers: CORS_HEADERS })
   } catch (err) {
-    console.error("generate-outreach error:", err)
+    console.error("generate-outreach error:", err instanceof Error ? err.message : JSON.stringify(err))
     return NextResponse.json({ error: "Failed to generate outreach message" }, { status: 500, headers: CORS_HEADERS })
   }
 }

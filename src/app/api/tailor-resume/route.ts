@@ -1,8 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { NextRequest, NextResponse } from "next/server"
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
 const BLOCKER_PATTERNS = [
   "will not sponsor",
   "no sponsorship",
@@ -48,6 +46,7 @@ function detectBlockers(jdText: string): string[] {
 }
 
 export async function POST(req: NextRequest) {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
   try {
     const { resumeText, jdText } = await req.json() as { resumeText: string; jdText: string }
 
