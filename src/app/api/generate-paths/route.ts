@@ -35,14 +35,14 @@ Return ONLY a valid JSON array with no extra text, no markdown, no code fences. 
 - whyReach (string)`
 
     const message = await client.messages.create({
-      model: "claude-opus-4-5",
+      model: "claude-opus-4-6",
       max_tokens: 1024,
       messages: [{ role: "user", content: prompt }],
     })
 
-    const raw = message.content[0].type === "text" ? message.content[0].text.trim() : ""
-
-    const paths = JSON.parse(raw)
+    const raw = message.content[0].type === "text" ? message.content[0].text.trim() : "[]"
+    const cleaned = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim()
+    const paths = JSON.parse(cleaned)
 
     return NextResponse.json(paths)
   } catch (err) {

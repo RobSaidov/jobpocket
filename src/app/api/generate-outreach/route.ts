@@ -3,10 +3,27 @@ import { NextRequest, NextResponse } from "next/server"
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin":  "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Accept",
+}
+
 const TIER_GUIDANCE: Record<string, string> = {
-  Hot: "This is a friend or former coworker. The goal is to ask for a referral directly — keep it casual, short, and assume familiarity. Don't over-explain. Reference the specific role.",
+  Hot:  "This is a friend or former coworker. The goal is to ask for a referral directly — keep it casual, short, and assume familiarity. Don't over-explain. Reference the specific role.",
   Warm: "This is an alumni connection or 2nd-degree contact. The goal is to ask 1-2 quick questions about their experience at the company — not to ask for a referral directly. Be genuine, mention the shared connection.",
   Cold: "This is a stranger. The goal is to ask 1-2 quick questions — mention you recently applied or are interested in the role. Keep it humble and low-pressure.",
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin":  "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Accept",
+    },
+  })
 }
 
 export async function POST(req: NextRequest) {
@@ -38,16 +55,16 @@ Write ONE short outreach message following the tier guidance above. Rules:
 - Write only the message — no subject line, no explanation, no quotes around it`
 
     const response = await client.messages.create({
-      model: "claude-sonnet-4-5",
+      model: "claude-opus-4-6",
       max_tokens: 512,
       messages: [{ role: "user", content: prompt }],
     })
 
     const message = response.content[0].type === "text" ? response.content[0].text.trim() : ""
 
-    return NextResponse.json({ message })
+    return NextResponse.json({ message }, { headers: CORS_HEADERS })
   } catch (err) {
     console.error("generate-outreach error:", err)
-    return NextResponse.json({ error: "Failed to generate outreach message" }, { status: 500 })
+    return NextResponse.json({ error: "Failed to generate outreach message" }, { status: 500, headers: CORS_HEADERS })
   }
 }

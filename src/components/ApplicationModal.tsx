@@ -36,13 +36,16 @@ function Sel<T extends string>({ value, opts, onChange }: { value: T; opts: T[];
 
 interface Props {
   editing: Application | null
+  prefill?: Partial<FormData>
   onSave: (app: Application) => void
   onDelete?: () => void
   onClose: () => void
 }
 
-export default function ApplicationModal({ editing, onSave, onDelete, onClose }: Props) {
-  const [form, setForm] = useState<FormData>(editing ? { ...editing } : { ...empty })
+export default function ApplicationModal({ editing, prefill, onSave, onDelete, onClose }: Props) {
+  const [form, setForm] = useState<FormData>(
+    editing ? { ...editing } : prefill ? { ...empty, ...prefill } : { ...empty }
+  )
   const [err, setErr] = useState("")
 
   useEffect(() => {

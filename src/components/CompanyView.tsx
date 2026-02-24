@@ -18,15 +18,24 @@ const priorityCls: Record<string, string> = {
 interface Props {
   apps: Application[]
   onEdit: (app: Application) => void
+  onAdd?: () => void
 }
 
-export default function CompanyView({ apps, onEdit }: Props) {
+export default function CompanyView({ apps, onEdit, onAdd }: Props) {
   const companies = [...new Set(apps.map((a) => a.company))].sort()
 
   if (companies.length === 0) {
     return (
       <div className="border border-[#e5e5e5] py-20 text-center">
-        <p className="text-xs text-[#888] tracking-widest uppercase">No applications yet</p>
+        <p className="text-xs text-[#888] tracking-widest uppercase mb-4">No applications yet</p>
+        {onAdd && (
+          <button
+            onClick={onAdd}
+            className="text-xs font-bold tracking-widest uppercase bg-amber-400 border border-amber-400 px-5 py-3 hover:bg-amber-500 hover:border-amber-500 transition-colors"
+          >
+            + Add Your First Application
+          </button>
+        )}
       </div>
     )
   }

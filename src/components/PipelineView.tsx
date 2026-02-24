@@ -15,9 +15,26 @@ const warmthCls: Record<string, string> = {
 interface Props {
   apps: Application[]
   onEdit: (app: Application) => void
+  onAdd?: () => void
 }
 
-export default function PipelineView({ apps, onEdit }: Props) {
+export default function PipelineView({ apps, onEdit, onAdd }: Props) {
+  if (apps.length === 0) {
+    return (
+      <div className="border border-[#e5e5e5] py-20 text-center">
+        <p className="text-xs text-[#888] tracking-widest uppercase mb-4">No applications in pipeline</p>
+        {onAdd && (
+          <button
+            onClick={onAdd}
+            className="text-xs font-bold tracking-widest uppercase bg-amber-400 border border-amber-400 px-5 py-3 hover:bg-amber-500 hover:border-amber-500 transition-colors"
+          >
+            + Add Your First Application
+          </button>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="overflow-x-auto">
       <div className="flex min-w-[900px] border border-[#e5e5e5]">
@@ -52,7 +69,7 @@ export default function PipelineView({ apps, onEdit }: Props) {
                   </div>
                 ))}
                 {col.length === 0 && (
-                  <p className="text-xs text-[#ddd] p-2 text-center">—</p>
+                  <p className="text-xs text-[#ddd] p-2 text-center">&mdash;</p>
                 )}
               </div>
             </div>

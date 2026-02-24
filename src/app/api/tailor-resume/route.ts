@@ -91,7 +91,7 @@ Rules:
 - gapAnalysis: identify 2-4 requirements in the JD that the resume doesn't clearly address.`
 
     const response = await client.messages.create({
-      model: "claude-sonnet-4-5",
+      model: "claude-opus-4-6",
       max_tokens: 1500,
       messages: [{ role: "user", content: prompt }],
     })

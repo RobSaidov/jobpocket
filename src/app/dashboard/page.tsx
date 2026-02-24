@@ -2,7 +2,7 @@
 
 import { Space_Mono } from "next/font/google"
 import { useEffect, useState } from "react"
-import { Application } from "@/lib/types"
+import { Application, Source } from "@/lib/types"
 import { getApplications, saveApplications, autoFollowUpDate } from "@/lib/storage"
 import Nav from "@/components/Nav"
 import ApplicationTable from "@/components/ApplicationTable"
@@ -43,9 +43,49 @@ export default function DashboardPage() {
   const [tab, setTab] = useState<Tab>("All Applications")
   const [quickFilter, setQuickFilter] = useState<QuickFilter>(null)
   const [editing, setEditing] = useState<Application | null>(null)
+  const [prefillData, setPrefillData] = useState<Partial<Application> | undefined>(undefined)
   const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => { setApps(getApplications()) }, [])
+
+  // Auto-add + open modal when navigated from Chrome extension (?add=true)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("add") !== "true") return
+
+    const warmthParam = params.get("warmth")
+    const validWarmth = warmthParam === "Hot" || warmthParam === "Warm" || warmthParam === "Cold"
+
+    const newApp: Application = {
+      id:             crypto.randomUUID(),
+      company:        params.get("company")    ?? "",
+      role:           params.get("role")       ?? "",
+      location:       "",
+      postingUrl:     params.get("url")        ?? "",
+      source:         (params.get("source")    ?? "LinkedIn") as Source,
+      priority:       "P1",
+      warmth:         validWarmth ? warmthParam : "Warm",
+      status:         "To Apply",
+      outreachStatus: "Not Started",
+      gotReply:       false,
+      applied:        false,
+      referralStatus: "None",
+      dateAdded:      new Date().toISOString(),
+    }
+
+    // Read directly from storage to avoid race with the other useEffect
+    const current = getApplications()
+    const updated = [...current, newApp]
+    saveApplications(updated)
+    setApps(updated)
+
+    // Open modal in edit mode so user can complete the details
+    setEditing(newApp)
+    setPrefillData(undefined)
+    setModalOpen(true)
+
+    window.history.replaceState({}, "", "/dashboard")
+  }, [])
 
   function persist(updated: Application[]) {
     setApps(updated)
@@ -75,9 +115,9 @@ export default function DashboardPage() {
     persist(updated)
   }
 
-  function openEdit(app: Application) { setEditing(app); setModalOpen(true) }
-  function openAdd() { setEditing(null); setModalOpen(true) }
-  function closeModal() { setModalOpen(false); setEditing(null) }
+  function openEdit(app: Application) { setEditing(app); setPrefillData(undefined); setModalOpen(true) }
+  function openAdd() { setEditing(null); setPrefillData(undefined); setModalOpen(true) }
+  function closeModal() { setModalOpen(false); setEditing(null); setPrefillData(undefined) }
 
   function activateQuickFilter(f: QuickFilter) {
     setQuickFilter((prev) => prev === f ? null : f)
@@ -171,13 +211,14 @@ export default function DashboardPage() {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-8 py-6 pb-24">
         {!quickFilter && tab === "Pipeline" ? (
-          <PipelineView apps={apps} onEdit={openEdit} />
+          <PipelineView apps={apps} onEdit={openEdit} onAdd={openAdd} />
         ) : !quickFilter && tab === "Active by Company" ? (
-          <CompanyView apps={apps} onEdit={openEdit} />
+          <CompanyView apps={apps} onEdit={openEdit} onAdd={openAdd} />
         ) : (
           <ApplicationTable
             apps={displayApps}
             onEdit={openEdit}
+            onAdd={openAdd}
             onMarkSent={!quickFilter && tab === "Apply Queue" ? handleMarkSent : undefined}
           />
         )}
@@ -192,6 +233,7 @@ export default function DashboardPage() {
       {modalOpen && (
         <ApplicationModal
           editing={editing}
+          prefill={prefillData}
           onSave={handleSave}
           onDelete={editing ? handleDelete : undefined}
           onClose={closeModal}
