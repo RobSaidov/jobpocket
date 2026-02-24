@@ -25,6 +25,7 @@ export async function OPTIONS() {
 }
 
 export async function POST(req: NextRequest) {
+  console.log("API KEY EXISTS:", !!process.env.ANTHROPIC_API_KEY, "LENGTH:", process.env.ANTHROPIC_API_KEY?.length)
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
   try {
     const { tier, userBackground, contactName, contactTitle, company, role } = await req.json() as {

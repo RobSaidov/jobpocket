@@ -1,4 +1,4 @@
-const APP_BASE = "https://jobpocket-7rgkohcd1-robsaidov-5198s-projects.vercel.app"
+const APP_BASE = "https://jobpocket.vercel.app"
 
 // ── State ──────────────────────────────────────────────────────────────────
 let state = {

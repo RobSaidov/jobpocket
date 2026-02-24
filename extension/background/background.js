@@ -1,5 +1,5 @@
 console.log("Background script loaded")
-const APP_BASE = "https://jobpocket-7rgkohcd1-robsaidov-5198s-projects.vercel.app"
+const APP_BASE = "https://jobpocket.vercel.app"
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   console.log("Message received:", message.type)
   if (message.type === "GENERATE_OUTREACH") {
