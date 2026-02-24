@@ -1,4 +1,5 @@
 # jobpocket
+# DEMO: [video submission](https://www.loom.com/share/c87b44fed7414901a429c4b5afda54f5)
 
 i applied to 47 jobs. got 3 responses. built this overnight.
 
